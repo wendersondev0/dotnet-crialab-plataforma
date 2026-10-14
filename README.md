@@ -33,3 +33,5 @@ dotnet run --project Presentation/CriaLab.Api.Presentation.WebApi
 ```
 
 Sobe em `http://localhost:5088`. Saúde: `GET /health`.
+
+Conta e loja: `POST /v1/auth/cadastro`, `POST /v1/auth/entrar`, `GET /v1/lojas/vitrine`. O administrador local usa o e-mail `crialab.dm@gmail.com` e a senha em `Admin:Senha` no user-secrets.

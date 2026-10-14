@@ -1,4 +1,4 @@
-﻿using CriaLab.Api.Core.Database;
+using CriaLab.Api.Core.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -13,7 +13,6 @@ namespace CriaLab.Api.Infra.SqlServer.Migrations
     [Migration("20261014111606_Inicial")]
     partial class Inicial
     {
-        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
