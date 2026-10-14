@@ -1,3 +1,4 @@
+using CriaLab.Api.Core.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -12,7 +13,7 @@ public class CriaLabDbContextFactory : IDesignTimeDbContextFactory<CriaLabDbCont
             throw new InvalidOperationException("Defina a variável CRIALAB_CONNECTION para criar ou aplicar migrações.");
 
         var opcoes = new DbContextOptionsBuilder<CriaLabDbContext>()
-            .UseSqlServer(conexao, sql => sql.MigrationsAssembly(typeof(CriaLabDbContext).Assembly.GetName().Name))
+            .UseSqlServer(conexao, sql => sql.MigrationsAssembly(typeof(CriaLabDbContextFactory).Assembly.GetName().Name))
             .Options;
         return new CriaLabDbContext(opcoes);
     }

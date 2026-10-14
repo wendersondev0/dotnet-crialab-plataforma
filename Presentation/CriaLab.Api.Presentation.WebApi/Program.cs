@@ -3,7 +3,10 @@ using System.Text;
 using Carter;
 using CriaLab.Api.Core.Armazenamento;
 using CriaLab.Api.Infra.Armazenamento;
+using CriaLab.Api.Core.Comum;
+using CriaLab.Api.Core.Database;
 using CriaLab.Api.Infra.SqlServer;
+using CriaLab.Api.Presentation.WebApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
@@ -23,10 +26,11 @@ builder.Services.ConfigureHttpJsonOptions(opcoes =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCarter();
+builder.Services.AddCriaLab();
 
 var conexao = builder.Configuration.GetConnectionString("CriaLab");
 builder.Services.AddDbContext<CriaLabDbContext>(opcoes =>
-    opcoes.UseSqlServer(conexao, sql => sql.MigrationsAssembly(typeof(CriaLabDbContext).Assembly.GetName().Name)));
+    opcoes.UseSqlServer(conexao, sql => sql.MigrationsAssembly(typeof(CriaLabDbContextFactory).Assembly.GetName().Name)));
 
 var pasta = builder.Configuration["Armazenamento:Pasta"];
 if (string.IsNullOrWhiteSpace(pasta))
@@ -52,7 +56,11 @@ builder.Services
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(chaveJwt))
         };
     });
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(opcoes =>
+{
+    foreach (var papel in CriaLab.Api.Core.Identidade.Domain.Papeis.Todos)
+        opcoes.AddPolicy(papel, politica => politica.RequireRole(papel));
+});
 
 builder.Services.AddCors(opcoes =>
 {
@@ -69,6 +77,12 @@ app.UseExceptionHandler(pipeline =>
     pipeline.Run(async contexto =>
     {
         var erro = contexto.Features.Get<IExceptionHandlerFeature>()?.Error;
+        if (erro is RegraNegocioException regra)
+        {
+            contexto.Response.StatusCode = regra.Status;
+            await contexto.Response.WriteAsJsonAsync(new { title = regra.Message, status = regra.Status });
+            return;
+        }
         var desenvolvimento = app.Environment.IsDevelopment();
         contexto.Response.StatusCode = StatusCodes.Status500InternalServerError;
         await contexto.Response.WriteAsJsonAsync(new
@@ -90,4 +104,12 @@ app.UseCors("Web");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapCarter();
+
+await using (var escopo = app.Services.CreateAsyncScope())
+{
+    var banco = escopo.ServiceProvider.GetRequiredService<CriaLabDbContext>();
+    await banco.Database.MigrateAsync();
+    await new CriaLabSeed(banco, app.Configuration).AplicarAsync();
+}
+
 app.Run();

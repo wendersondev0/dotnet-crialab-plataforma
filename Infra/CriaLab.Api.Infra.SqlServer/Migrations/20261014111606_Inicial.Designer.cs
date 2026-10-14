@@ -1,4 +1,4 @@
-﻿using CriaLab.Api.Infra.SqlServer;
+﻿using CriaLab.Api.Core.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
