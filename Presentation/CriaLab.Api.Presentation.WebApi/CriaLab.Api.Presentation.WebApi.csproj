@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>610bdd0e-973b-455c-a5e9-1db9d796bdf6</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Carter" Version="8.2.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.22" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.31" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\CriaLab.Api.Core\CriaLab.Api.Core.csproj" />
+    <ProjectReference Include="..\..\Infra\CriaLab.Api.Infra.SqlServer\CriaLab.Api.Infra.SqlServer.csproj" />
+    <ProjectReference Include="..\..\Infra\CriaLab.Api.Infra.Armazenamento\CriaLab.Api.Infra.Armazenamento.csproj" />
+  </ItemGroup>
+
+</Project>
